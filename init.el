@@ -1,11 +1,11 @@
-;;; init.el --- CuongLM personal emacs configuration
+;;; init.el --- NamPNQ personal emacs configuration, fork from CuongLM
 
 ;;; Commentary:
 
 ;; To use this init.el, you need to install all dependencies first:
 ;;
 ;;    $ sudo make deps
-;;    $ sh install_global.sh
+;;    
 ;;
 
 ;;; Code:
@@ -46,12 +46,6 @@
 
 ;; Enable clipboard
 (setq x-select-enable-clipboard t)
-
-;; cperl-mode is preferred to perl-mode
-(mapc (lambda (pair)
-        (if (eq (cdr pair) 'perl-mode)
-            (setcdr pair 'cperl-mode)))
-      (append auto-mode-alist interpreter-mode-alist))
 
 ;;;;;;;;;;;;;;;;
 ;; GUI config ;;
@@ -97,7 +91,7 @@
 (setq scroll-margin 5)
 
 ;; Default font
-(set-frame-font "Terminus-13" t t)
+;;(set-frame-font "Terminus-13" t t)
 
 ;;;;;;;;;;;;;;;;;
 ;; Key binding ;;
@@ -176,10 +170,10 @@
   :ensure t)
 
 ;; Use Solarized theme
-(use-package solarized-theme
+(use-package zenburn-theme
   :ensure t
   :config
-  (load-theme 'solarized-light t))
+  (load-theme 'zenburn t))
 
 ;; flycheck
 (use-package flycheck
@@ -190,32 +184,7 @@
   (mapc (lambda (mode)
           (add-hook mode 'flycheck-mode))
         '(python-mode-hook
-          cperl-mode-hook
-          sh-mode-hook
-          go-mode-hook
-          c-mode-hook
-          c++-mode-hook
-          emacs-lisp-mode-hook
-          php-mode-hook
-          perl6-mode-hook))
-  (add-hook 'sh-mode-hook
-            (lambda ()
-              (flycheck-select-checker 'sh-shellcheck)))
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (flycheck-select-checker 'go-golint)
-              (setq flycheck-disabled-checkers '(go-build)))))
-
-;; flycheck-checkbashisms
-(use-package flycheck-checkbashisms
-  :ensure t
-  :config
-  (flycheck-checkbashisms-setup)
-  (setq flycheck-checkbashisms-posix t))
-
-;; flycheck-per6
-(use-package flycheck-perl6
-  :ensure t)
+          php-mode-hook)))
 
 ;; undo-tree
 (use-package undo-tree
@@ -227,25 +196,6 @@
 ;; ack
 (use-package ack-and-a-half
   :ensure t)
-
-;; perl-completion
-(use-package perl-completion
-  :ensure t
-  :bind ("C-M-p" . plcmp-cmd-complete-all)
-  :config
-  (add-hook 'cperl-mode-hook
-            `(lambda()
-               (perl-completion-mode t)
-               (when (require 'auto-complete nil t) ; no error whatever auto-complete.el is not installed.
-                 (auto-complete-mode t)
-                 (make-local-variable 'ac-sources)
-                 (setq ac-sources '(ac-source-perl-completion)))
-               (setq cperl-indent-level 4
-                     cperl-close-paren-offset -4
-                     cperl-continued-statement-offset 4
-                     cperl-tab-always-indent t
-                     cperl-indent-parens-as-block t
-                     perl-indent-parens-as-block t))))
 
 ;; neo tree
 (use-package neotree
@@ -271,27 +221,9 @@
 (use-package magit
   :ensure t)
 
-;; company-go
-(use-package company-go
-  :ensure t)
-
 ;; company-jedi
 (use-package company-jedi
   :ensure t)
-
-;; company-ansible
-(use-package company-ansible
-  :ensure t)
-
-;; company-c-headers
-(use-package company-c-headers
-  :ensure t)
-
-;; company-ghc
-(use-package company-ghc
-  :ensure t
-  :config
-  (custom-set-variables '(company-ghc-show-info t)))
 
 ;; company
 (use-package company
@@ -303,10 +235,8 @@
   (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))
   (mapc (lambda (pkg)
           (add-to-list 'company-backends pkg))
-        '(company-c-headers
-          company-ansible
-          company-jedi
-          company-go))
+        '(company-jedi))
+
   ;; Workaround for working with fci-mode
   (defvar-local company-fci-mode-on-p nil)
 
@@ -344,49 +274,6 @@
 (use-package yaml-mode
   :ensure t)
 
-;; Ansible
-(use-package ansible
-  :ensure t
-  :config
-  (add-hook 'yaml-mode-hook '(lambda () (ansible t))))
-
-;; Elixir
-(use-package elixir-mode
-  :ensure t)
-
-;; helm-gtags
-(use-package helm-gtags
-  :ensure t
-  :diminish helm-gtags-mode
-  :config
-  (setq helm-gtags-ignore-case t
-        helm-gtags-auto-update t
-        helm-gtags-use-input-at-cursor t
-        helm-gtags-pulse-at-cursor t
-        helm-gtags-prefix-key "\C-cg"
-        helm-gtags-suggested-key-mapping t)
-  (add-hook 'c-mode-hook 'helm-gtags-mode)
-  (add-hook 'c++-mode-hook 'helm-gtags-mode)
-  (eval-after-load 'helm-gtags
-    '(progn
-       (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-       (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-       (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-       (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-       (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-histor)
-       (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))))
-
-;; go-mode
-(use-package go-mode
-  :ensure t
-  :config
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  (add-hook 'go-mode-hook
-            (lambda ()
-              (local-set-key (kbd "M-.") 'godef-jump)
-              (local-set-key (kbd "C-c C-c d") 'godoc-at-point)
-              (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports))))
-
 ;; fill column indicator
 (use-package fill-column-indicator
   :ensure t
@@ -401,9 +288,7 @@
                          (fci-mode t))))))
   (let (mode-config-hash)
     (setq mode-config-hash (make-hash-table :test 'equal))
-    (puthash 'python-mode-hook 79 mode-config-hash)
-    (puthash 'c-mode-hook 80 mode-config-hash)
-    (puthash 'cperl-mode-hook 80 mode-config-hash)
+    (puthash 'python-mode-hook 120 mode-config-hash)
     (maphash (lambda (k v) (my/fci-config k v)) mode-config-hash)))
 
 ;; ws-butler
@@ -431,11 +316,6 @@
                           'check-parens
                           nil t)))))
 
-;; comment-dwim-2
-(use-package comment-dwim-2
-  :ensure t
-  :bind ("M-;" . comment-dwim-2))
-
 ;; xlicense
 (use-package xlicense
   :ensure t)
@@ -461,10 +341,6 @@
   :config
   (persp-mode))
 
-;; Perl6
-(use-package perl6-mode
-  :ensure t)
-
 ;; helm-c-yasnippet
 (use-package helm-c-yasnippet
   :ensure t
@@ -474,81 +350,32 @@
 (use-package dockerfile-mode
   :ensure t)
 
-;; haskell-mode
-(use-package haskell-mode
-  :ensure t
-  :config
-  (defun my/haskell-mode-hoogle-at-point ()
-    "Show Hoogle documentation for the indentifier at POINT."
-    (interactive)
-    (haskell-hoogle (thing-at-point 'word) t))
-  (eval-after-load 'haskell-mode
-    '(progn
-       (define-key haskell-mode-map [f8] 'haskell-navigate-imports)
-       (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-       (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-       (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
-       (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
-       (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
-       (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)
-       (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-       (define-key haskell-mode-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
-       (define-key haskell-mode-map (kbd "C-c d") 'my/haskell-mode-hoogle-at-point)))
-  (eval-after-load 'haskell-cabal
-    '(progn
-       (define-key haskell-cabal-mode-map (kbd "C-c C-s") 'haskell-interactive-switch)
-       (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-       (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-       (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
-  (custom-set-variables
-   '(haskell-tags-on-save t)
-   '(haskell-stylish-on-save t)
-   '(haskell-process-suggest-remove-import-lines t)
-   '(haskell-process-auto-import-loaded-modules t)
-   '(haskell-process-log t)
-   '(haskell-process-type 'cabal-repl)))
-
-;; ghc
-(use-package ghc
-  :ensure t
-  :config
-  (autoload 'ghc-init "ghc" nil t)
-  (autoload 'ghc-debug "ghc" nil t)
-  (add-hook 'haskell-mode-hook (lambda () (ghc-init))))
-
-;; shm
-(use-package shm
-  :ensure t
-  :config
-  (add-hook 'haskell-mode-hook 'structured-haskell-mode)
-  (set-face-background 'shm-current-face "#eee8d5")
-  (set-face-background 'shm-quarantine-face "lemonchiffon"))
-
-;; hindent
-(use-package hindent
-  :ensure t
-  :diminish hindent-mode
-  :config
-  (defun my/hindent-reformat-region-or-buffer ()
-    "Reformat region if active, otherwise buffer."
-    (interactive)
-    (save-excursion
-      (if (region-active-p)
-          (hindent-reformat-region (region-beginning) (region-end))
-        (hindent-reformat-buffer))))
-  (add-hook 'haskell-mode-hook 'hindent-mode)
-  (eval-after-load 'haskell-mode
-    '(progn
-       (define-key haskell-mode-map (kbd "C-M-\\") 'my/hindent-reformat-region-or-buffer)))
-  (custom-set-variables
-   '(hindent-style "johan-tibell")))
-
 ;; ansible-doc
 (use-package ansible-doc
   :ensure t
   :diminish ansible-doc-mode
   :config
   (add-hook 'yaml-mode-hook #'ansible-doc-mode))
+
+;; nyan-mode
+(use-package nyan-mode
+  :ensure t
+  :config
+  (nyan-mode))
+
+;; rust-mode
+(use-package rust-mode
+  :ensure t)
+
+;; flycheck-rust
+(use-package flycheck-rust
+  :ensure t
+  :config
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
+;; php-mode
+(use-package php-mode
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Hook Functions ;;
@@ -571,11 +398,6 @@
 (add-hook 'python-mode-hook
           (lambda ()
             (setq python-indent-offset 4)))
-
-;; C indentation
-(add-hook 'c-mode-hook
-          (lambda ()
-            (setq c-basic-offset 4)))
 
 (provide 'init)
 ;;; init.el ends here
