@@ -1,0 +1,10 @@
+#!/bin/sh
+
+FONT_NAME="SourceCodePro"
+wget https://github.com/adobe-fonts/source-code-pro/archive/2.010R-ro/1.030R-it.zip -O ${FONT_NAME}.zip
+unzip ${FONT_NAME}.zip
+mkdir -p ~/.fonts
+cp source-code-pro-2.010R-ro-1.030R-it/OTF/*.otf ~/.fonts/
+fc-cache -f -v
+rm ${FONT_NAME}.zip
+rm -rf source-code-pro-2.010R-ro-1.030R-it
