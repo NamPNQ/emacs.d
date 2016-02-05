@@ -4,7 +4,7 @@
 
 ;; To use this init.el, you need to install all dependencies first:
 ;;
-;;    $ sudo make deps
+;;    $ make deps
 ;;    
 ;;
 
