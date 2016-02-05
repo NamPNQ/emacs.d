@@ -7,8 +7,7 @@ help:
 deps: pip font
 
 pip:
-	easy_install pip && \
-		pip install -r python_requirements.txt
+	sudo pip install -r python_requirements.txt
 
 font:
 	sh font_install
