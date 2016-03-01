@@ -169,12 +169,6 @@
 (use-package anything
   :ensure t)
 
-;; Use Solarized theme
-(use-package zenburn-theme
-  :ensure t
-  :config
-  (load-theme 'zenburn t))
-
 ;; flycheck
 (use-package flycheck
   :ensure t
@@ -385,6 +379,24 @@
   ("C->" . mc/mark-next-like-this)
   ("C-<" . mc/mark-previous-like-this)
   ("C-c C-<" . mc/mark-all-like-this))
+
+;; editorconfig
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
+;; Use zenburn theme
+(use-package zenburn-theme
+  :ensure t
+  :config
+  (load-theme 'zenburn t))
+
+;; jslint
+(use-package flymake-jslint
+  :ensure t
+  :config
+  (add-hook 'js-mode-hook 'flymake-jslint-load))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Hook Functions ;;
