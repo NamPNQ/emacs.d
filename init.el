@@ -392,11 +392,9 @@
   :config
   (load-theme 'zenburn t))
 
-;; jslint
-(use-package flymake-jslint
-  :ensure t
-  :config
-  (add-hook 'js-mode-hook 'flymake-jslint-load))
+;; js2-mode
+(use-package js2-mode
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Hook Functions ;;
