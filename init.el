@@ -268,6 +268,28 @@
 (use-package yaml-mode
   :ensure t)
 
+;; helm-gtags
+(use-package helm-gtags
+  :ensure t
+  :diminish helm-gtags-mode
+  :config
+  (setq helm-gtags-ignore-case t
+        helm-gtags-auto-update t
+        helm-gtags-use-input-at-cursor t
+        helm-gtags-pulse-at-cursor t
+        helm-gtags-prefix-key "\C-cg"
+        helm-gtags-suggested-key-mapping t)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (eval-after-load 'helm-gtags
+    '(progn
+       (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+       (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+       (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+       (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+       (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-histor)
+       (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))))
+
 ;; fill column indicator
 (use-package fill-column-indicator
   :ensure t
@@ -394,7 +416,18 @@
 
 ;; js2-mode
 (use-package js2-mode
-  :ensure t)
+  :ensure t
+  :mode "\\.js\\'")
+
+;;ac-php
+(use-package ac-php
+  :ensure t
+  :config
+  (add-hook 'php-mode-hook
+          '(lambda ()
+             (require 'ac-php-company)
+             (company-mode t)
+             (add-to-list 'company-backends 'company-ac-php-backend ))))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Hook Functions ;;
