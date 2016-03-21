@@ -91,7 +91,7 @@
 (setq scroll-margin 5)
 
 ;; Default font
-(set-frame-font "Source Code Pro-13" t t)
+(set-frame-font "inconsolata-13" t t)
 
 ;;;;;;;;;;;;;;;;;
 ;; Key binding ;;
@@ -419,15 +419,6 @@
   :ensure t
   :mode "\\.js\\'")
 
-;;ac-php
-(use-package ac-php
-  :ensure t
-  :config
-  (add-hook 'php-mode-hook
-          '(lambda ()
-             (require 'ac-php-company)
-             (company-mode t)
-             (add-to-list 'company-backends 'company-ac-php-backend ))))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Hook Functions ;;
