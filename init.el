@@ -419,6 +419,18 @@
   :ensure t
   :mode "\\.js\\'")
 
+;; less-mode
+(use-package less-css-mode
+  :ensure t)
+
+;;scss-mode
+(use-package scss-mode
+  :ensure t)
+
+;; coffeescript
+(use-package coffee-mode
+  :ensure t)
+
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Hook Functions ;;
